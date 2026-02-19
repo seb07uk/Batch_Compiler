@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BAT → EXE | Sebastian Januchowski</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --bg2: #eef1f9;
+    --surface: #ffffff;
+    --surface2: #f9fafd;
+    --accent: #2563eb;
+    --accent2: #0ea5e9;
+    --accent-light: #eff6ff;
+    --accent-mid: #bfdbfe;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --text: #0f172a;
+    --text2: #334155;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --border2: #cbd5e1;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, #c7d2fe 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  section, nav, footer { position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 64px;
+    height: 68px;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .nav-logo .arrow { color: var(--accent); }
+
+  .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: #fff !important;
+    padding: 9px 22px;
+    border-radius: 8px;
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+    transition: background 0.2s, box-shadow 0.2s !important;
+  }
+  .nav-cta:hover { background: #1d4ed8 !important; box-shadow: 0 4px 16px rgba(37,99,235,0.35) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(37,99,235,0.12), transparent); top: -100px; left: -100px; }
+  .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(14,165,233,0.10), transparent); bottom: -80px; right: -80px; }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mid);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 28px;
+    animation: fadeDown 0.5s ease both;
+  }
+
+  .pill-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+    animation: blink 1.5s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.2rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: var(--text);
+    margin-bottom: 8px;
+    animation: fadeDown 0.6s 0.05s ease both;
+  }
+  .hero-title .arrow { color: var(--accent); }
+  .hero-title .exe {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-tagline {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 40px;
+    font-weight: 400;
+    animation: fadeDown 0.6s 0.12s ease both;
+  }
+  .hero-tagline strong { color: var(--text2); font-weight: 600; }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+  }
+  .btn-primary:hover { background: #1d4ed8; box-shadow: 0 8px 28px rgba(37,99,235,0.4); transform: translateY(-2px); }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 14px 32px;
+    border: 1.5px solid var(--border2);
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); background: var(--accent-light); }
+
+  /* TERMINAL MOCKUP */
+  .hero-mockup {
+    margin-top: 64px;
+    width: 100%;
+    max-width: 680px;
+    animation: fadeUp 0.8s 0.35s ease both;
+  }
+
+  .window {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.08), 0 40px 80px rgba(37,99,235,0.06);
+  }
+
+  .window-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 18px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .wdot { width: 12px; height: 12px; border-radius: 50%; }
+  .wdot.r { background: #ff5f57; }
+  .wdot.y { background: #ffbd2e; }
+  .wdot.g { background: #28c840; }
+
+  .window-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .window-body {
+    padding: 28px 32px;
+    background: #0c1220;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.9;
+    color: #6b7fa3;
+    min-height: 200px;
+  }
+
+  .tl { display: flex; gap: 10px; }
+  .t-step { color: #3b82f6; }
+  .t-ok { color: #22c55e; }
+  .t-warn { color: #f59e0b; }
+  .t-path { color: #94a3b8; }
+  .t-done { color: #a78bfa; }
+
+  .term-progress { margin: 14px 0 6px; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .term-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #0ea5e9);
+    width: 0;
+    animation: fillBar 2s 1s ease forwards;
+    border-radius: 2px;
+  }
+  @keyframes fillBar { to { width: 100%; } }
+
+  /* STATS */
+  .stats {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    flex: 1;
+    min-width: 160px;
+    text-align: center;
+    padding: 40px 32px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label { font-size: 0.8rem; font-weight: 500; color: var(--muted); }
+
+  /* FEATURES */
+  .features { padding: 100px 64px; max-width: 1200px; margin: 0 auto; }
+
+  .label-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .label-tag::before { content: ''; width: 16px; height: 2px; background: var(--accent); border-radius: 1px; }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  .section-desc { color: var(--muted); font-size: 1.05rem; max-width: 480px; line-height: 1.65; margin-bottom: 56px; }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .feature-card:hover { border-color: var(--accent-mid); box-shadow: 0 8px 32px rgba(37,99,235,0.10); transform: translateY(-3px); }
+  .feature-card:hover::after { opacity: 1; }
+
+  .fi {
+    width: 44px; height: 44px;
+    background: var(--accent-light);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  .feature-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .feature-desc { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+
+  /* HOW IT WORKS */
+  .how {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 100px 64px;
+  }
+  .how-inner { max-width: 780px; margin: 0 auto; }
+  .steps { margin-top: 56px; display: flex; flex-direction: column; }
+
+  .step {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step:hover .step-num { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 4px 16px rgba(37,99,235,0.3); }
+
+  .step-num {
+    width: 48px; height: 48px; flex-shrink: 0;
+    border: 2px solid var(--border2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--accent);
+    transition: all 0.25s;
+    background: var(--surface2);
+  }
+  .step-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .step-desc { color: var(--muted); line-height: 1.65; font-size: 0.95rem; }
+
+  /* PREVIEW */
+  .preview {
+    padding: 100px 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .check-list { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 0.95rem; color: var(--text2); line-height: 1.5; }
+  .chk {
+    width: 20px; height: 20px; flex-shrink: 0;
+    background: var(--green-light);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green);
+    font-size: 0.7rem; font-weight: 700;
+    margin-top: 1px;
+  }
+
+  .app-window {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .app-topbar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #0c1220; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .app-body { padding: 20px; background: #0c1220; font-family: 'DM Mono', monospace; font-size: 0.68rem; }
+  .app-header { text-align: center; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 16px; }
+  .app-logo-text { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
+  .al-bat { color: #94a3b8; }
+  .al-arr { color: #3b82f6; }
+  .al-exe { background: linear-gradient(135deg,#3b82f6,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .app-sub { color: #4b5563; font-size: 0.58rem; letter-spacing: 2px; margin-top: 3px; }
+  .app-field { margin-bottom: 12px; }
+  .app-label { color: #4b5563; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+  .app-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 5px; padding: 8px 10px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; }
+  .app-checks { display: flex; gap: 14px; margin-bottom: 14px; }
+  .app-check { display: flex; align-items: center; gap: 5px; color: #6ee7b7; font-size: 0.65rem; }
+  .app-check-box { width: 12px; height: 12px; background: linear-gradient(135deg,#3b82f6,#0ea5e9); border-radius: 2px; display:flex; align-items:center; justify-content:center; color:#000; font-size:0.5rem; font-weight:700; }
+  .app-check-empty { width: 12px; height: 12px; border: 1px solid rgba(255,255,255,0.15); border-radius: 2px; }
+  .app-convert { background: linear-gradient(135deg,#22c55e,#16a34a); color:#fff; font-family:'Syne',sans-serif; font-weight:800; font-size:0.72rem; letter-spacing:2px; text-align:center; padding:10px; border-radius:5px; margin-bottom:12px; }
+  .app-log { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius:5px; padding:8px 10px; font-size:0.57rem; line-height:1.8; color:#4b6a8c; max-height:72px; overflow:hidden; }
+
+  /* CTA */
+  .cta {
+    padding: 120px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--bg), var(--surface));
+    border-top: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(37,99,235,0.06), transparent);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .cta-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; color: var(--text); line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
+  .cta-title span { color: var(--accent); }
+  .cta-sub { color: var(--muted); font-size: 1.05rem; max-width: 440px; margin: 0 auto 40px; line-height: 1.65; }
+  .cta-meta { margin-top: 24px; font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 28px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-copy { font-size: 0.82rem; color: var(--muted); }
+  .footer-copy span { color: var(--accent); font-weight: 600; }
+  .footer-links { display: flex; gap: 24px; list-style: none; }
+  .footer-links a { text-decoration: none; font-size: 0.82rem; color: var(--muted); font-weight: 500; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .features, .how, .cta { padding: 64px 24px; }
+    .preview { grid-template-columns: 1fr; padding: 64px 24px; gap: 40px; }
+    footer { padding: 24px; flex-direction: column; text-align: center; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .stat:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">.BAT<span class="arrow"> → </span>.EXE</div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#preview">Preview</a></li>
+    <li><a href="#download" class="nav-cta">Download Free</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="hero-pill">
+    <span class="pill-dot"></span>
+    v2026 — Available now · Free
+  </div>
+
+  <h1 class="hero-title">
+    .BAT<span class="arrow"> → </span><span class="exe">.EXE</span>
+  </h1>
+
+  <p class="hero-tagline">
+    Turn any batch script into a <strong>polished Windows executable</strong> in seconds.<br>
+    No coding. No hassle. Just convert.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#download" class="btn-primary">⬇ Download for Free</a>
+    <a href="#how" class="btn-secondary">▶ See how it works</a>
+  </div>
+
+  <div class="hero-mockup">
+    <div class="window">
+      <div class="window-bar">
+        <div class="wdot r"></div>
+        <div class="wdot y"></div>
+        <div class="wdot g"></div>
+        <div class="window-title">BAT → EXE · Conversion in progress...</div>
+      </div>
+      <div class="window-body">
+        <div class="tl"><span class="t-step">›</span><span class="t-path">Detecting Python 3.13 environment...</span></div>
+        <div class="tl"><span class="t-step">›</span><span>Compiling: <span class="t-path">LauncherPy_admin.bat</span></span></div>
+        <div class="tl"><span class="t-step">›</span><span>Loading icon: <span class="t-path">icon.ico</span></span></div>
+        <div class="tl"><span class="t-ok">INFO</span><span style="margin-left:6px">Building single-file package...</span></div>
+        <div class="tl"><span class="t-ok">INFO</span><span style="margin-left:6px">Analyzing module dependencies...</span></div>
+        <div class="tl"><span class="t-warn">2057</span><span style="margin-left:6px">Target bytecode optimization: level 0</span></div>
+        <div class="term-progress"><div class="term-fill"></div></div>
+        <div class="tl" style="margin-top:8px"><span class="t-done">✓ SUCCESS</span><span style="color:#a5f3fc;margin-left:8px">LauncherPy_admin.exe — saved to Desktop</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">1</div><div class="stat-label">Click to convert</div></div>
+  <div class="stat"><div class="stat-num">&lt;5s</div><div class="stat-label">Conversion time</div></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Offline &amp; local</div></div>
+  <div class="stat"><div class="stat-num">Free</div><div class="stat-label">No license needed</div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="label-tag">Features</div>
+  <h2 class="section-title">Everything you need,<br>nothing you don't</h2>
+  <p class="section-desc">Advanced options wrapped in a clean, intuitive interface. No terminal required.</p>
+
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="fi">🎯</div>
+      <div class="feature-title">Onefile Mode</div>
+      <p class="feature-desc">Pack your entire program into a single .exe — perfect for distribution without installers or dependencies.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="fi">🖼️</div>
+      <div class="feature-title">Custom Icon</div>
+      <p class="feature-desc">Add your own .ico, .png or .jpg icon. Your executable looks professional right out of the box.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="fi">🖥️</div>
+      <div class="feature-title">Console Toggle</div>
+      <p class="feature-desc">Choose whether your app opens a console window or runs silently in the background — full control.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="fi">📁</div>
+      <div class="feature-title">Custom Output Path</div>
+      <p class="feature-desc">Pick exactly where your .exe gets saved. Keep your projects organised from day one.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="fi">📏</div>
+      <div class="feature-title">Lock Window Size</div>
+      <p class="feature-desc">Prevent resizing — ideal for tools with a fixed UI that should stay pixel-perfect.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="fi">📋</div>
+      <div class="feature-title">Live Build Log</div>
+      <p class="feature-desc">Watch the conversion in real time. Colour-coded output tells you exactly what's happening.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="label-tag">Process</div>
+    <h2 class="section-title">Three steps to a finished EXE</h2>
+    <p class="section-desc">Simpler than you think. Faster than you'd expect.</p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Pick your BAT file</div>
+          <p class="step-desc">Browse to your batch script or type the path directly. Optionally attach a custom icon to make your executable stand out.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Configure your options</div>
+          <p class="step-desc">Toggle Onefile mode, console window, window size lock, and choose your output folder — all from one clean screen.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Hit CONVERT</div>
+          <p class="step-desc">That's it. Your .exe is ready within seconds in the chosen folder, ready to run or share with anyone on Windows.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREVIEW -->
+<section class="preview" id="preview">
+  <div class="reveal">
+    <div class="label-tag">Interface</div>
+    <h2 class="section-title">Designed to get out<br>of your way</h2>
+    <p class="section-desc">A focused dark UI built with care for every detail. Clean inputs, instant feedback, no clutter.</p>
+    <ul class="check-list">
+      <li><span class="chk">✓</span><span>Polished dark theme at any resolution</span></li>
+      <li><span class="chk">✓</span><span>Inline live build log with colour-coded output</span></li>
+      <li><span class="chk">✓</span><span>Polish &amp; English language support</span></li>
+      <li><span class="chk">✓</span><span>No installation needed — just run the .exe</span></li>
+      <li><span class="chk">✓</span><span>Built on PyInstaller + Python 3.13</span></li>
+    </ul>
+  </div>
+
+  <div class="reveal">
+    <div class="app-window">
+      <div class="app-topbar">
+        <div class="wdot r"></div>
+        <div class="wdot y"></div>
+        <div class="wdot g"></div>
+      </div>
+      <div class="app-body">
+        <div class="app-header">
+          <div class="app-logo-text">
+            <span class="al-bat">.BAT</span>
+            <span class="al-arr"> → </span>
+            <span class="al-exe">.EXE</span>
+          </div>
+          <div class="app-sub">2026 © SEBASTIAN JANUCHOWSKI</div>
+        </div>
+
+        <div class="app-field">
+          <div class="app-label">BAT file:</div>
+          <div class="app-input"><span>C:/Users/max/Desktop/LauncherPy.bat</span><span style="color:#3b82f6">···</span></div>
+        </div>
+        <div class="app-field">
+          <div class="app-label">Icon (optional):</div>
+          <div class="app-input"><span>C:/Users/max/Desktop/icon.ico</span><span style="color:#3b82f6">···</span></div>
+        </div>
+        <div class="app-field">
+          <div class="app-label">Output directory:</div>
+          <div class="app-input"><span>C:/Users/max/Desktop</span><span style="color:#3b82f6">···</span></div>
+        </div>
+
+        <div class="app-checks">
+          <div class="app-check"><div class="app-check-box">✓</div> Onefile</div>
+          <div class="app-check"><div class="app-check-box">✓</div> Console</div>
+          <div class="app-check"><div class="app-check-empty"></div> <span style="color:#4b5563">Lock size</span></div>
+        </div>
+
+        <div class="app-convert">CONVERT</div>
+
+        <div class="app-log">
+          <div><span style="color:#22c55e">INFO</span> Building Analysis...</div>
+          <div><span style="color:#22c55e">INFO</span> Looking for Python shared library...</div>
+          <div><span style="color:#f59e0b">2057 INFO</span> Target bytecode optimization: 0</div>
+          <div><span style="color:#3b82f6">2075 INFO</span> Analyzing modules for base_library...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="download">
+  <div class="label-tag" style="display:flex;justify-content:center">Download</div>
+  <h2 class="cta-title">Ready to try it?<br><span>It's completely free.</span></h2>
+  <p class="cta-sub">No registration. No conversion limits. Works fully offline on Windows 10 and 11.</p>
+  <a href="#" class="btn-primary" style="font-size:1rem; padding:16px 48px; display:inline-flex;">
+    ⬇ &nbsp;Download BAT → EXE
+  </a>
+  <div class="cta-meta">Windows 10/11 · Python 3.13 · PyInstaller · v2026</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">2026© <span>Sebastian Januchowski</span> — All rights reserved</div>
+  <ul class="footer-links">
+    <li><a href="#">GitHub</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">License</a></li>
+  </ul>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
